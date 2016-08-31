@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ssm.mapper.ProductMapper" >
+  <resultMap id="BaseResultMap" type="com.ssm.pojo.Product" >
+    <id column="productcode" property="productcode" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="productname" property="productname" jdbcType="VARCHAR" />
+    <result column="appminversion" property="appminversion" jdbcType="VARCHAR" />
+    <result column="isonline" property="isonline" jdbcType="VARCHAR" />
+    <result column="isallarea" property="isallarea" jdbcType="VARCHAR" />
+    <result column="priority" property="priority" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    productcode, id, productname, appminversion, isonline, isallarea, priority
+  </sql>
+  <select id="selectByAreacode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+      product.*
+    from product,area,relation
+    where area.areacode=#{areacode} and relation.areacode=area.areacode and relation.productcode=product.productcode and product.isallarea='0'
+    UNION
+    select *
+    from product where isallarea='1'
+    order by priority
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ssm.pojo.ProductExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from product
+    where productcode = #{productcode,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from product
+    where productcode = #{productcode,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ssm.pojo.ProductExample" >
+    delete from product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ssm.pojo.Product" >
+    insert into product (productcode, id, productname, 
+      appminversion, isonline, isallarea, 
+      priority)
+    values (#{productcode,jdbcType=VARCHAR}, #{id,jdbcType=INTEGER}, #{productname,jdbcType=VARCHAR}, 
+      #{appminversion,jdbcType=VARCHAR}, #{isonline,jdbcType=VARCHAR}, #{isallarea,jdbcType=VARCHAR}, 
+      #{priority,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ssm.pojo.Product" >
+    insert into product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="productcode != null" >
+        productcode,
+      </if>
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productname != null" >
+        productname,
+      </if>
+      <if test="appminversion != null" >
+        appminversion,
+      </if>
+      <if test="isonline != null" >
+        isonline,
+      </if>
+      <if test="isallarea != null" >
+        isallarea,
+      </if>
+      <if test="priority != null" >
+        priority,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="productcode != null" >
+        #{productcode,jdbcType=VARCHAR},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="productname != null" >
+        #{productname,jdbcType=VARCHAR},
+      </if>
+      <if test="appminversion != null" >
+        #{appminversion,jdbcType=VARCHAR},
+      </if>
+      <if test="isonline != null" >
+        #{isonline,jdbcType=VARCHAR},
+      </if>
+      <if test="isallarea != null" >
+        #{isallarea,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ssm.pojo.ProductExample" resultType="java.lang.Integer" >
+    select count(*) from product
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update product
+    <set >
+      <if test="record.productcode != null" >
+        productcode = #{record.productcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.productname != null" >
+        productname = #{record.productname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appminversion != null" >
+        appminversion = #{record.appminversion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isonline != null" >
+        isonline = #{record.isonline,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isallarea != null" >
+        isallarea = #{record.isallarea,jdbcType=VARCHAR},
+      </if>
+      <if test="record.priority != null" >
+        priority = #{record.priority,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update product
+    set productcode = #{record.productcode,jdbcType=VARCHAR},
+      id = #{record.id,jdbcType=INTEGER},
+      productname = #{record.productname,jdbcType=VARCHAR},
+      appminversion = #{record.appminversion,jdbcType=VARCHAR},
+      isonline = #{record.isonline,jdbcType=VARCHAR},
+      isallarea = #{record.isallarea,jdbcType=VARCHAR},
+      priority = #{record.priority,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ssm.pojo.Product" >
+    update product
+    <set >
+      <if test="id != null" >
+        id = #{id,jdbcType=INTEGER},
+      </if>
+      <if test="productname != null" >
+        productname = #{productname,jdbcType=VARCHAR},
+      </if>
+      <if test="appminversion != null" >
+        appminversion = #{appminversion,jdbcType=VARCHAR},
+      </if>
+      <if test="isonline != null" >
+        isonline = #{isonline,jdbcType=VARCHAR},
+      </if>
+      <if test="isallarea != null" >
+        isallarea = #{isallarea,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        priority = #{priority,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where productcode = #{productcode,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ssm.pojo.Product" >
+    update product
+    set id = #{id,jdbcType=INTEGER},
+      productname = #{productname,jdbcType=VARCHAR},
+      appminversion = #{appminversion,jdbcType=VARCHAR},
+      isonline = #{isonline,jdbcType=VARCHAR},
+      isallarea = #{isallarea,jdbcType=VARCHAR},
+      priority = #{priority,jdbcType=VARCHAR}
+    where productcode = #{productcode,jdbcType=VARCHAR}
+  </update>
+</mapper>
